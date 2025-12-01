@@ -8,7 +8,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Random;
+
+import static es.dm2e.psp.actividad01.grupo2.RandomGenerator.randomFloat;
+import static es.dm2e.psp.actividad01.grupo2.RandomGenerator.randomInt;
 
 public class GeneradorFichero {
 
@@ -26,7 +28,7 @@ public class GeneradorFichero {
 
     public static void main(String[] args) {
         // Generamos un número random
-        int randomFailure = generateRandomNumber(MIN_RANDOM_GENERATION_NUMBER, MAX_RANDOM_GENERATION_NUMBER);
+        int randomFailure = randomInt(MIN_RANDOM_GENERATION_NUMBER, MAX_RANDOM_GENERATION_NUMBER);
 
         // Si es mayor continua su ejecución, si es menor se 'rompe' el programa
         if (isGreater(randomFailure, NUMBER_THRESHOLD)) {
@@ -40,12 +42,6 @@ public class GeneradorFichero {
     // ======================================================
     // =         SIMULACIÓN DE FALLO EN LA GENERACIÓN       =
     // ======================================================
-
-    // Generar número random
-    private static int generateRandomNumber(int min, int max) {
-        Random random = new Random();
-        return random.nextInt(min, max + 1);
-    }
 
     // Checkear si el número es mayor a otro (30 en nuestro caso)
     private static boolean isGreater(int value, int threshold) {
@@ -96,10 +92,9 @@ public class GeneradorFichero {
 
             // Iteramos para generar los datos random i veces
             for(int i = 0; i < nTransfers; i++){
-                pw.write(String.format("%d;%d.%2d",
-                        generateRandomNumber(MIN_ACCOUNT_NUMBER, MAX_ACCOUNT_NUMBER),
-                        generateRandomNumber(MIN_PAYROLL_AMOUNT, MAX_PAYROLL_AMOUNT),
-                        generateRandomNumber(0, 99)));
+                pw.write(String.format("%d;%f",
+                        randomInt(MIN_ACCOUNT_NUMBER, MAX_ACCOUNT_NUMBER),
+                        randomFloat(MIN_PAYROLL_AMOUNT, MAX_PAYROLL_AMOUNT)));
             }
 
         } catch (IOException e) {
