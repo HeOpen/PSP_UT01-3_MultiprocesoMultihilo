@@ -1,0 +1,60 @@
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# IntelliJ cache & system
+out/
+.idea_modules/
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf/
+
+# Plugin-specific
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+
+### Java ###
+*.class
+*.log
+*.ctxt
+hs_err_pid*
+replay_pid*
+
+# Virtual Machine crash logs
+*.hprof
+
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+### Gradle ###
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# VSCode (por si alguien abre el proyecto ahí)
+.vscode/
+
+### OS ###
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+
+### Temporary files ###
+*.tmp
+*.swp
+*.cache
