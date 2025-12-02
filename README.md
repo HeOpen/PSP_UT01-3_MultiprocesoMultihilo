@@ -1,13 +1,13 @@
 ### 📦 Procesos
 #### 📑 Generar fichero de transferencias
 - ✅ Simulación de fallo en la generación.
-- ❌ Testeado.
+- ✅ Testeado.
 - ✅ Recogerá el stream de entrada.
-- 🚧 Testeado.
+- ✅ Testeado.
 - ✅ Genera el fichero.
-- 🚧 Testeado.
+- ✅ Testeado.
 - ✅ Finaliza con un código de éxito o de error.
-- 🚧 Testeado.
+- ✅ Testeado.
 #### 📑 Procesar fichero de transferencias
 - ✅ Recoge el stream de entrada.
 - [ ] Testeado.
@@ -41,12 +41,12 @@
   - [ ] Sean interrumpidos.
 - [ ] Testeado.
 #### 📑 Lanzamiento de los anteriores desde un tercer proceso
-- [ ] Preguntará al usuario el nombre del directorio de trabajo, donde estarán los ficheros.
-- [ ] Testeado.
-- [ ] Preguntará al usuario el nombre del fichero con las transferencias.
-- [ ] Testeado.
-- [ ] Preguntará al usuario el número de transferencias a generar.
-- [ ] Testeado.
+- ✅ Preguntará al usuario el nombre del directorio de trabajo, donde estarán los ficheros.
+- ✅ Testeado.
+- ✅ Preguntará al usuario el nombre del fichero con las transferencias.
+- ✅ Testeado.
+- ✅ Preguntará al usuario el número de transferencias a generar.
+- ✅ Testeado.
 - [ ] Preguntará al usuario el número de hilos que se deben usar para procesar el fichero.
 - [ ] Testeado.
 - [ ] Arrancará el programa que genera el fichero de transferencias.
