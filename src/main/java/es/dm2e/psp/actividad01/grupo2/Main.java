@@ -73,16 +73,18 @@ public class Main {
                 """;
 
         System.out.println(askText);
-        String workingFile = String.format("%s/%s", dir, SCANNER.nextLine());
+        String fileName = SCANNER.nextLine();
+        String workingFile = String.format("%s/%s", dir, fileName);
 
         // Validar que es un archivo existente
         if (Validator.validateFile(workingFile)) {
             FileManager.deleteFile(workingFile);
-        } else {
-            FileManager.createFile(workingFile);
         }
 
-        return workingFile;
+        // Finalmente se crea el fichero
+        FileManager.createFile(workingFile);
+
+        return fileName;
     }
 
     // Método para recoger el número de transferencias que deben generarse
@@ -121,6 +123,10 @@ public class Main {
                 writer.println(workingFile);
                 writer.flush();
                 writer.println(numTransfers);
+                writer.flush();
+
+                System.out.println(reader.readLine());
+
             }
 
             process.waitFor();

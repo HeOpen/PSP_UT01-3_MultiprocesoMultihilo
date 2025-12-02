@@ -25,7 +25,7 @@ public class GeneradorFichero {
     private static final int MIN_ACCOUNT_NUMBER = 100_000_000;
     private static final int MAX_ACCOUNT_NUMBER = 299_999_999;
     private static final int MIN_PAYROLL_AMOUNT = 1_500;
-    private static final int MAX_PAYROLL_AMOUNT = 3000;
+    private static final int MAX_PAYROLL_AMOUNT = 3_000;
 
     public static void main(String[] args) {
         // Generamos un número random
@@ -101,7 +101,7 @@ public class GeneradorFichero {
         } catch (IOException e) {
             // Enseñamos un mensaje descriptivo del error y salimos de este programa con status 200
             System.out.println("Fallo al escribir en el fichero de transferencias");
-            System.exit(200);
+            System.exit(300);
         }
     }
 
