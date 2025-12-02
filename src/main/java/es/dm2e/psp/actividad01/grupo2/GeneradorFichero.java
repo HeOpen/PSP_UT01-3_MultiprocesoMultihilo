@@ -8,6 +8,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 import static es.dm2e.psp.actividad01.grupo2.RandomGenerator.randomFloat;
 import static es.dm2e.psp.actividad01.grupo2.RandomGenerator.randomInt;
@@ -92,7 +93,7 @@ public class GeneradorFichero {
 
             // Iteramos para generar los datos random i veces
             for(int i = 0; i < nTransfers; i++){
-                pw.write(String.format("%d;%f",
+                pw.write(String.format(Locale.US,"%d;%.2f\n",
                         randomInt(MIN_ACCOUNT_NUMBER, MAX_ACCOUNT_NUMBER),
                         randomFloat(MIN_PAYROLL_AMOUNT, MAX_PAYROLL_AMOUNT)));
             }
