@@ -4,7 +4,7 @@ package es.dm2e.psp.actividad01.grupo2;
 // =        REPRESENTACIÓN DE LA CUENTA DEL BANCO       =
 // ======================================================
 
-import static es.dm2e.psp.actividad01.grupo2.RandomGenerator.randomFloat;
+import static es.dm2e.psp.actividad01.grupo2.utils.RandomGenerator.randomFloat;
 
 public class MonitorCuentaBanco {
 

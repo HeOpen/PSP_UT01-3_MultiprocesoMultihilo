@@ -10,8 +10,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 
-import static es.dm2e.psp.actividad01.grupo2.RandomGenerator.randomFloat;
-import static es.dm2e.psp.actividad01.grupo2.RandomGenerator.randomInt;
+import static es.dm2e.psp.actividad01.grupo2.utils.RandomGenerator.randomFloat;
+import static es.dm2e.psp.actividad01.grupo2.utils.RandomGenerator.randomInt;
 
 public class GeneradorFichero {
 

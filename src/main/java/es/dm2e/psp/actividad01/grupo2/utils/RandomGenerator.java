@@ -1,4 +1,4 @@
-package es.dm2e.psp.actividad01.grupo2;
+package es.dm2e.psp.actividad01.grupo2.utils;
 
 // ======================================================
 // =                UTILS / CONSTANTES                  =
