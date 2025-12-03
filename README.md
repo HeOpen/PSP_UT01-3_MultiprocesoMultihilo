@@ -10,30 +10,30 @@
 - ✅ Testeado.
 #### 📑 Procesar fichero de transferencias
 - ✅ Recoge el stream de entrada.
-- [ ] Testeado.
-- 🛠️ Crear un monitor que represente la cuenta del banco.
-- [ ] Testeado.
-- [ ] Lee el fichero de transferencias anterior.
-- [ ] Testeado.
+- ✅ Testeado.
+- ✅ Crear un monitor que represente la cuenta del banco.
+- ✅ Testeado.
+- ✅ Lee el fichero de transferencias anterior.
+- ✅ Testeado.
 - Abre 3 streams:
-  1. [ ] Transferencias sin saldo.
-  2. [ ] Transferencias internas.
-  3. [ ] Transferencias externas.
+  1. ✅ Transferencias sin saldo.
+  2. ✅ Transferencias internas.
+  3. ✅ Transferencias externas.
+- ✅ Testeado.
+- ✅ Crear hilos para procesar las transferencias.
+- ✅ Testeado.
+- ✅ Esperar a que los hilos terminen.
 - [ ] Testeado.
-- [ ] Crear hilos para procesar las transferencias.
-- [ ] Testeado.
-- [ ] Esperar a que los hilos terminen.
-- [ ] Testeado.
-- [ ] Mostrar el importe procesado.
-- [ ] Testeado.
+- ✅ Mostrar el importe procesado.
+- ✅ Testeado.
 - [ ] Mostrar el saldo restante.
 - [ ] Testeado.
 - [ ] Terminará.
 - [ ] Testeado.
 #### 📑 Hilos que procesarán las transferencias
-- [ ] Se ejecutan mientras haya trasnferencias que procesar.
+- ✅ Se ejecutan mientras haya trasnferencias que procesar.
 - [ ] Testeado.
-- [ ] Procesan una trasnferencia por ciclo.
+- ✅ Procesan una transferencia por ciclo.
 - [ ] Testeado.
 - Se paran cuando:
   - [ ] Se hayan procesado todas las transferencias.
@@ -47,13 +47,13 @@
 - ✅ Testeado.
 - ✅ Preguntará al usuario el número de transferencias a generar.
 - ✅ Testeado.
-- [ ] Preguntará al usuario el número de hilos que se deben usar para procesar el fichero.
+- ✅ Preguntará al usuario el número de hilos que se deben usar para procesar el fichero.
 - [ ] Testeado.
-- [ ] Arrancará el programa que genera el fichero de transferencias.
+- ✅ Arrancará el programa que genera el fichero de transferencias.
+- ✅ Testeado.
+- ✅ Esperará a que este proceso termine y si falla, avisará.
 - [ ] Testeado.
-- [ ] Esperará a que este proceso termine y si falla, avisará.
-- [ ] Testeado.
-- [ ] Arrancará el programa que lee y procesa el fichero de transferencias.
+- ✅ Arrancará el programa que lee y procesa el fichero de transferencias.
 - [ ] Testeado.
 - [ ] Esperará a que este proceso termine, mostrando por consola los mensajes del proceso lanzado.
 - [ ] Testeado.
