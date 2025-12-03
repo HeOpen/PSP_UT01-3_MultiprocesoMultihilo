@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -19,6 +18,19 @@ public class Main {
 
     public static void main(String[] args) {
 
+        // Inputs de usuario
+        String directorio = getDirectorio();
+        String fichero = getFichero(directorio);
+        int nTransferencias = getNumeroTransferencias();
+        int nHilos = getNumeroHilos();
+
+        // Inicio de procesos
+        iniciarGeneradorTransferencias(directorio, fichero, nTransferencias);
+        iniciarProcesadorTransferencias(directorio, fichero, nTransferencias, nHilos);
+
+    }
+
+    private static String getDirectorio() {
         // ======================================================
         // =            INPUT DE USUARIO: DIRECTORIO            =
         // ======================================================
@@ -47,7 +59,10 @@ public class Main {
                 System.exit(3);
             }
         }
+        return directorio;
+    }
 
+    private static String getFichero(String directorio) {
         // ======================================================
         // =              INPUT DE USUARIO: FICHERO             =
         // ======================================================
@@ -70,7 +85,10 @@ public class Main {
                 System.exit(3);
             }
         }
+        return fichero;
+    }
 
+    private static int getNumeroTransferencias() {
         // ======================================================
         // =     INPUT DE USUARIO: NÚMERO DE TRANSFERENCIAS     =
         // ======================================================
@@ -98,7 +116,10 @@ public class Main {
                 transferencias = SCANNER.nextLine().trim();
             }
         } while (!nTransferenciasValido);
+        return nTransferencias;
+    }
 
+    private static int getNumeroHilos() {
         // ======================================================
         // =         INPUT DE USUARIO: NÚMERO DE HILOS          =
         // ======================================================
@@ -114,7 +135,7 @@ public class Main {
 
         do {
             try {
-                nHilos = Integer.parseInt(transferencias);
+                nHilos = Integer.parseInt(hilos);
                 if (nHilos <= 0) {
                     System.out.println("El número de hilos no puede ser menor o igual a 0\nIntroduzca un nuevo número:");
                     hilos = SCANNER.nextLine().trim();
@@ -126,7 +147,10 @@ public class Main {
                 hilos = SCANNER.nextLine().trim();
             }
         } while (!nHilosValido);
+        return nHilos;
+    }
 
+    private static void iniciarGeneradorTransferencias(String directorio, String fichero, int nTransferencias) {
         // ======================================================
         // =     ARRANCAR PROCESO GENERADOR TRANSFERENCIAS      =
         // ======================================================
@@ -150,7 +174,9 @@ public class Main {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    private static void iniciarProcesadorTransferencias(String directorio, String fichero, int nTransferencias, int nHilos) {
         // ======================================================
         // =     ARRANCAR PROCESO PROCESADOR TRANSFERENCIAS     =
         // ======================================================
@@ -170,14 +196,14 @@ public class Main {
                 pw.flush();
 
                 String output;
-                while((output = br.readLine()) != null){
+                while ((output = br.readLine()) != null) {
 
                     System.out.println(output);
                 }
             }
 
-              int exitValue = process.waitFor();
-              System.out.println(exitValue);
+            int exitValue = process.waitFor();
+            System.out.println(exitValue);
 
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
