@@ -5,11 +5,9 @@ import es.dm2e.psp.actividad01.grupo2.monitores.ColeccionTransferencias;
 import es.dm2e.psp.actividad01.grupo2.monitores.CuentaBanco;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ProcesadorFichero {
@@ -61,31 +59,15 @@ public class ProcesadorFichero {
         // ======================================================
         // =          APERTURA DE STREAMS (FICHEROS)            =
         // ======================================================
-        Path pathFicheroSinSaldo = Paths.get(directorio, fichero + ".sinsaldo");
-        Path pathFicheroTransferenciasInternas = Paths.get(directorio, fichero + ".internas");
-        Path pathFicheroTransferenciasExternas = Paths.get(directorio, fichero + ".externas");
-
-        if (Files.exists(pathFicheroTransferencias)) {
-            try {
-                Files.deleteIfExists(pathFicheroSinSaldo);
-                Files.deleteIfExists(pathFicheroTransferenciasInternas);
-                Files.deleteIfExists(pathFicheroTransferenciasExternas);
-                Files.createFile(pathFicheroSinSaldo);
-                Files.createFile(pathFicheroTransferenciasInternas);
-                Files.createFile(pathFicheroTransferenciasExternas);
-            } catch (IOException e) {
-                throw new RuntimeException("Error al configurar la estructura de ficheros", e);
-            }
-        }
-
-        // ======================================================
-        // =          CREACIÓN DE HILOS PROCESADORES            =
-        // ======================================================
-        List<HiloProcesador> hilos = new ArrayList<>();
-        try (PrintWriter escrituraSinSaldo = new PrintWriter(pathFicheroSinSaldo.toFile());
-             PrintWriter escrituraInternas = new PrintWriter(pathFicheroTransferenciasInternas.toFile());
-             PrintWriter escrituraExternas = new PrintWriter(pathFicheroTransferenciasExternas.toFile());
+        try (PrintWriter escrituraSinSaldo = new PrintWriter(new FileWriter(pathFicheroTransferencias + ".sinsaldo", false));
+             PrintWriter escrituraInternas = new PrintWriter(new FileWriter(pathFicheroTransferencias + ".internas", false));
+             PrintWriter escrituraExternas = new PrintWriter(new FileWriter(pathFicheroTransferencias + ".externas", false));
              BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+
+            // ======================================================
+            // =          CREACIÓN DE HILOS PROCESADORES            =
+            // ======================================================
+            List<HiloProcesador> hilos = new ArrayList<>();
 
             for (int i = 0; i < nHilos; i++) {
                 hilos.add(new HiloProcesador(
@@ -105,15 +87,15 @@ public class ProcesadorFichero {
                 throw new RuntimeException(e);
             }
 
-            String output;
-            while ((output = br.readLine()) != null) {
-                System.out.println(output);
+            String input;
+            while ((input = br.readLine()) != null) {
+                System.out.println(input);
             }
 
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("Error al encontrar los ficheros", e);
+            throw new RuntimeException("Error al escribir en los ficheros", e);
         } catch (IOException e) {
-            throw new RuntimeException("Error al configurar los streams", e);
+            throw new RuntimeException("Error al leer stream del hilo", e);
         }
 
     }
