@@ -44,11 +44,12 @@ public class HiloProcesador extends Thread {
                 float valorTransferencia = Float.parseFloat(transferencia.split(";")[1]);
                 System.out.printf("Se procede a realizar transferencia: %s\n", transferencia);
                 System.out.printf("Saldo de la cuenta del banco: %f\n", cuentaBanco.getSaldo());
-                if (cuentaBanco.getSaldo() - valorTransferencia <= 0) {
+                if (!cuentaBanco.realizarTransferencia(valorTransferencia)) {
                     System.out.println("Guardando operación en fichero sin saldo");
                     outSinSaldo.println(transferencia);
                     totalImportes += valorTransferencia;
                 } else {
+                    cuentaBanco.realizarTransferencia(valorTransferencia);
                     switch (transferencia.charAt(0)) {
                         case '1':
                             System.out.println("Guardando operación en fichero interno");
@@ -61,7 +62,6 @@ public class HiloProcesador extends Thread {
                             totalImportes += valorTransferencia;
                             break;
                     }
-                    cuentaBanco.realizarTransferencia(valorTransferencia);
                 }
 
             }

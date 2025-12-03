@@ -15,7 +15,12 @@ public class CuentaBanco {
         return saldo;
     }
 
-    public synchronized void realizarTransferencia(float saldo) {
+    public synchronized boolean realizarTransferencia(float saldo) {
+        if (this.saldo - saldo < 0) {
+            // fixme: o hacer wait() mejor???
+            return false;
+        }
         this.saldo -= saldo;
+        return true;
     }
 }
