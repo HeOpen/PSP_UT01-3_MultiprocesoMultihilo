@@ -4,6 +4,7 @@ import es.dm2e.psp.actividad01.grupo2.monitores.ColeccionTransferencias;
 import es.dm2e.psp.actividad01.grupo2.monitores.CuentaBanco;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -40,14 +41,34 @@ public class ProcesadorFichero {
         // ======================================================
         ColeccionTransferencias transferencias = new ColeccionTransferencias();
         Path pathFicheroTransferencias = Paths.get(directorio, fichero);
-        try(BufferedReader br = new BufferedReader(new FileReader(pathFicheroTransferencias.toFile()))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(pathFicheroTransferencias.toFile()))) {
 
-            transferencias.addTransferencia(br.readLine());
+            transferencias.offerTransferencia(br.readLine());
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Fichero no encontrado", e);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+        // ======================================================
+        // =          APERTURA DE STREAMS (FICHEROS)            =
+        // ======================================================
+        Path pathFicheroSinSaldo = Paths.get(directorio, fichero + ".sinsaldo");
+        Path pathFicheroTransferenciasInternas = Paths.get(directorio, fichero + ".internas");
+        Path pathFicheroTransferenciasExternas = Paths.get(directorio, fichero + ".externas");
+
+        if (Files.exists(pathFicheroTransferencias)) {
+            try {
+                Files.deleteIfExists(pathFicheroSinSaldo);
+                Files.deleteIfExists(pathFicheroTransferenciasInternas);
+                Files.deleteIfExists(pathFicheroTransferenciasExternas);
+                Files.createFile(pathFicheroSinSaldo);
+                Files.createFile(pathFicheroTransferenciasInternas);
+                Files.createFile(pathFicheroTransferenciasExternas);
+            } catch (IOException e) {
+                throw new RuntimeException("Error al configurar la estructura de ficheros", e);
+            }
         }
 
     }

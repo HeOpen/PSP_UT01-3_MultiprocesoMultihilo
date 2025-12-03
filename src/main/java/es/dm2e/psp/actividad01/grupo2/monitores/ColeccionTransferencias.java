@@ -5,14 +5,18 @@ import java.util.Queue;
 
 public class ColeccionTransferencias {
 
-    private Queue<String> transferencias = new LinkedList<>();
+    private final Queue<String> transferencias = new LinkedList<>();
 
-    public synchronized void addTransferencia(String transferencia) {
+    public synchronized void offerTransferencia(String transferencia) {
         this.transferencias.offer(transferencia);
     }
 
-    public synchronized void removeTransferencia() {
-        this.transferencias.poll();
+    public synchronized String pollTransferencia() {
+        return this.transferencias.poll();
+    }
+
+    public synchronized String peekTransferencia() {
+        return this.transferencias.peek();
     }
 
 }
