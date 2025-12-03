@@ -1,5 +1,6 @@
 package es.dm2e.psp.actividad01.grupo2.programas;
 
+import es.dm2e.psp.actividad01.grupo2.hilos.HiloProcesador;
 import es.dm2e.psp.actividad01.grupo2.monitores.ColeccionTransferencias;
 import es.dm2e.psp.actividad01.grupo2.monitores.CuentaBanco;
 
@@ -7,6 +8,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ProcesadorFichero {
 
@@ -43,7 +47,10 @@ public class ProcesadorFichero {
         Path pathFicheroTransferencias = Paths.get(directorio, fichero);
         try (BufferedReader br = new BufferedReader(new FileReader(pathFicheroTransferencias.toFile()))) {
 
-            transferencias.offerTransferencia(br.readLine());
+            String transferencia;
+            while ((transferencia = br.readLine()) != null) {
+                transferencias.offerTransferencia(transferencia);
+            }
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Fichero no encontrado", e);
@@ -69,6 +76,44 @@ public class ProcesadorFichero {
             } catch (IOException e) {
                 throw new RuntimeException("Error al configurar la estructura de ficheros", e);
             }
+        }
+
+        // ======================================================
+        // =          CREACIÓN DE HILOS PROCESADORES            =
+        // ======================================================
+        List<HiloProcesador> hilos = new ArrayList<>();
+        try (PrintWriter escrituraSinSaldo = new PrintWriter(pathFicheroSinSaldo.toFile());
+             PrintWriter escrituraInternas = new PrintWriter(pathFicheroTransferenciasInternas.toFile());
+             PrintWriter escrituraExternas = new PrintWriter(pathFicheroTransferenciasExternas.toFile());
+             BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+
+            for (int i = 0; i < nHilos; i++) {
+                hilos.add(new HiloProcesador(
+                        "Hilo " + i, transferencias, cuentaBanco, escrituraSinSaldo, escrituraInternas, escrituraExternas
+                ));
+            }
+
+            for (HiloProcesador hilo : hilos) {
+                hilo.start();
+            }
+
+            try {
+                for (HiloProcesador hilo : hilos) {
+                    hilo.join();
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            String output;
+            while ((output = br.readLine()) != null) {
+                System.out.println(output);
+            }
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Error al encontrar los ficheros", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Error al configurar los streams", e);
         }
 
     }

@@ -41,26 +41,29 @@ public class HiloProcesador extends Thread {
         try {
             while (coleccionTransferencias.peekTransferencia() != null && !this.isInterrupted()) {
                 String transferencia = coleccionTransferencias.pollTransferencia();
+                float valorTransferencia = Float.parseFloat(transferencia.split(";")[1]);
                 System.out.printf("Se procede a realizar transferencia: %s\n", transferencia);
-                float saldoCuentaBanco = cuentaBanco.getSaldo();
-                System.out.printf("Saldo de la cuenta del banco: %f\n", saldoCuentaBanco);
-                if (saldoCuentaBanco <= 0) {
+                System.out.printf("Saldo de la cuenta del banco: %f\n", cuentaBanco.getSaldo());
+                if (cuentaBanco.getSaldo() - valorTransferencia <= 0) {
                     System.out.println("Guardando operación en fichero sin saldo");
                     outSinSaldo.println(transferencia);
-                    totalImportes += Float.parseFloat(transferencia.split(";")[1]);
+                    totalImportes += valorTransferencia;
+                } else {
+                    switch (transferencia.charAt(0)) {
+                        case '1':
+                            System.out.println("Guardando operación en fichero interno");
+                            outInterna.println(transferencia);
+                            totalImportes += valorTransferencia;
+                            break;
+                        case '2':
+                            System.out.println("Guardando operación en fichero externo");
+                            outExterna.println(transferencia);
+                            totalImportes += valorTransferencia;
+                            break;
+                    }
                 }
-                switch (transferencia.charAt(0)) {
-                    case '1':
-                        System.out.println("Guardando operación en fichero interno");
-                        outInterna.println(transferencia);
-                        totalImportes += Float.parseFloat(transferencia.split(";")[1]);
-                        break;
-                    case '2':
-                        System.out.println("Guardando operación en fichero externo");
-                        outExterna.println(transferencia);
-                        totalImportes += Float.parseFloat(transferencia.split(";")[1]);
-                        break;
-                }
+
+                cuentaBanco.realizarTransferencia(valorTransferencia);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -154,8 +155,8 @@ public class Main {
         // =     ARRANCAR PROCESO PROCESADOR TRANSFERENCIAS     =
         // ======================================================
         ProcessBuilder procesoProcesador = new ProcessBuilder("java", "es.dm2e.psp.actividad01.grupo2.programas.ProcesadorFichero");
-        procesoGenerador.environment().put("JAVA_HOME", System.getProperty("java.home"));
-        procesoGenerador.environment().put("CLASSPATH", System.getProperty("java.class.path"));
+        procesoProcesador.environment().put("JAVA_HOME", System.getProperty("java.home"));
+        procesoProcesador.environment().put("CLASSPATH", System.getProperty("java.class.path"));
 
         try {
             Process process = procesoProcesador.start();
@@ -167,10 +168,16 @@ public class Main {
                 pw.println(nTransferencias);
                 pw.println(nHilos);
                 pw.flush();
+
+                String output;
+                while((output = br.readLine()) != null){
+
+                    System.out.println(output);
+                }
             }
 
-            int exitValue = process.waitFor();
-            System.out.println(exitValue);
+              int exitValue = process.waitFor();
+              System.out.println(exitValue);
 
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);

@@ -53,7 +53,8 @@ public class GeneradorFichero {
 
                 for (int i = 0; i < nTransferencias; i++) {
                     int numeroCuenta = RANDOM.nextInt(100_000_000, 300_000_000);
-                    float ingreso = RANDOM.nextFloat(0, 1.01f) * (3_000 - 1_500) + 1_500;
+                    // fixme: no sirve 1.01 mirar como hacerlo para incluir 3_000
+                    float ingreso = RANDOM.nextFloat() * (3_000 - 1_500) + 1_500;
                     String transferencia = String.format(Locale.US, "%d;%.2f", numeroCuenta, ingreso);
 
                     pw.println(transferencia);
