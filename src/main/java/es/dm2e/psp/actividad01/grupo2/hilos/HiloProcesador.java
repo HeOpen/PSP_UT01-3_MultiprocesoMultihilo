@@ -61,9 +61,9 @@ public class HiloProcesador extends Thread {
                             totalImportes += valorTransferencia;
                             break;
                     }
+                    cuentaBanco.realizarTransferencia(valorTransferencia);
                 }
 
-                cuentaBanco.realizarTransferencia(valorTransferencia);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

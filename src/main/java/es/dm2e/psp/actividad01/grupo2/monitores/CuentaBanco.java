@@ -5,7 +5,7 @@ import java.util.Random;
 public class CuentaBanco {
 
     private float saldo;
-    private float saldoInicial = new Random().nextFloat(0, 1.01f) * (2_700 - 1_500) + 1_500;
+    private float saldoInicial = new Random().nextFloat() * (2_700 - 1_500) + 1_500;
 
     public CuentaBanco() {
         this.saldo = saldoInicial;
