@@ -1,5 +1,7 @@
 package es.dm2e.psp.actividad01.grupo2;
 
+import es.dm2e.psp.actividad01.grupo2.monitores.CuentaBanco;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,6 +29,7 @@ public class Main {
         // Inicio de procesos
         iniciarGeneradorTransferencias(directorio, fichero, nTransferencias);
         iniciarProcesadorTransferencias(directorio, fichero, nTransferencias, nHilos);
+        //System.out.printf("El saldo final es de: %d€",);
 
     }
 
@@ -151,12 +154,22 @@ public class Main {
     }
 
     private static void iniciarGeneradorTransferencias(String directorio, String fichero, int nTransferencias) {
-        // ======================================================
-        // =     ARRANCAR PROCESO GENERADOR TRANSFERENCIAS      =
-        // ======================================================
-        ProcessBuilder procesoGenerador = new ProcessBuilder("java", "es.dm2e.psp.actividad01.grupo2.programas.GeneradorFichero");
-        procesoGenerador.environment().put("JAVA_HOME", System.getProperty("java.home"));
-        procesoGenerador.environment().put("CLASSPATH", System.getProperty("java.class.path"));
+        // 1. Obtenemos la ruta absoluta al ejecutable de Java actual
+        String javaHome = System.getProperty("java.home");
+        String javaBin = javaHome + java.io.File.separator + "bin" + java.io.File.separator + "java";
+
+        // 2. Obtenemos el Classpath para que encuentre tus clases
+        String classpath = System.getProperty("java.class.path");
+
+        // 3. Nombre completo de la clase a ejecutar
+        String className = "es.dm2e.psp.actividad01.grupo2.programas.GeneradorFichero";
+
+        // 4. Construimos el comando completo
+        // Equivale a: /usr/bin/java -cp ... es.dm2e...GeneradorFichero
+        ProcessBuilder procesoGenerador = new ProcessBuilder(javaBin, "-cp", classpath, className);
+
+        // Opcional pero recomendado: Heredar errores para verlos en consola si falla el hijo
+        procesoGenerador.redirectError(ProcessBuilder.Redirect.INHERIT);
 
         try {
             Process process = procesoGenerador.start();
@@ -169,41 +182,43 @@ public class Main {
             }
 
             int exitValue = process.waitFor();
-            System.out.println(exitValue);
+            System.out.println("Generador terminó con código: " + exitValue);
 
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
-
     private static void iniciarProcesadorTransferencias(String directorio, String fichero, int nTransferencias, int nHilos) {
-        // ======================================================
-        // =     ARRANCAR PROCESO PROCESADOR TRANSFERENCIAS     =
-        // ======================================================
-        ProcessBuilder procesoProcesador = new ProcessBuilder("java", "es.dm2e.psp.actividad01.grupo2.programas.ProcesadorFichero");
-        procesoProcesador.environment().put("JAVA_HOME", System.getProperty("java.home"));
-        procesoProcesador.environment().put("CLASSPATH", System.getProperty("java.class.path"));
+        String javaHome = System.getProperty("java.home");
+        String javaBin = javaHome + java.io.File.separator + "bin" + java.io.File.separator + "java";
+        String classpath = System.getProperty("java.class.path");
+        String className = "es.dm2e.psp.actividad01.grupo2.programas.ProcesadorFichero";
+
+        ProcessBuilder procesoProcesador = new ProcessBuilder(javaBin, "-cp", classpath, className);
+        procesoProcesador.redirectError(ProcessBuilder.Redirect.INHERIT);
 
         try {
             Process process = procesoProcesador.start();
 
             try (PrintWriter pw = new PrintWriter(process.getOutputStream());
                  BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+
+                // Pasar parámetros
                 pw.println(directorio);
                 pw.println(fichero);
                 pw.println(nTransferencias);
                 pw.println(nHilos);
                 pw.flush();
 
+                // Leer salida
                 String output;
                 while ((output = br.readLine()) != null) {
-
                     System.out.println(output);
                 }
             }
 
             int exitValue = process.waitFor();
-            System.out.println(exitValue);
+            System.out.println("Procesador terminó con código: " + exitValue);
 
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);

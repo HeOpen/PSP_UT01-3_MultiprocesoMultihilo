@@ -14,60 +14,45 @@ public class ProcesadorFichero {
 
     public static void main(String[] args) {
 
-        // ======================================================
-        // =            RECOGIDA STREAM DE ENTRADA              =
-        // ======================================================
         String directorio = "";
         String fichero = "";
         int nTransferencias = 0;
         int nHilos = 0;
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
-
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             directorio = br.readLine();
             fichero = br.readLine();
             nTransferencias = Integer.parseInt(br.readLine());
             nHilos = Integer.parseInt(br.readLine());
-
+            // No cerramos br aquí explícitamente, dejamos que el proceso muera.
         } catch (IOException e) {
             System.exit(200);
         }
 
-        // ======================================================
-        // =        CREACIÓN MONITOR: CUENTA DEL BANCO          =
-        // ======================================================
+        // 2. PREPARAR ENTITADES
         CuentaBanco cuentaBanco = new CuentaBanco();
-
-        // ======================================================
-        // =      LECTURA DEL FICHERO DE TRANSFERENCIAS         =
-        // ======================================================
         ColeccionTransferencias transferencias = new ColeccionTransferencias();
         Path pathFicheroTransferencias = Paths.get(directorio, fichero);
-        try (BufferedReader br = new BufferedReader(new FileReader(pathFicheroTransferencias.toFile()))) {
 
+        // 3. CARGAR FICHERO EN MEMORIA
+        try (BufferedReader br = new BufferedReader(new FileReader(pathFicheroTransferencias.toFile()))) {
             String transferencia;
             while ((transferencia = br.readLine()) != null) {
                 transferencias.offerTransferencia(transferencia);
             }
-
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Fichero no encontrado", e);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error leyendo fichero transferencias", e);
         }
 
-        // ======================================================
-        // =          APERTURA DE STREAMS (FICHEROS)            =
-        // ======================================================
+        // 4. PROCESAR (ESCRIBIR SALIDA)
         try (PrintWriter escrituraSinSaldo = new PrintWriter(new FileWriter(pathFicheroTransferencias + ".sinsaldo", false));
              PrintWriter escrituraInternas = new PrintWriter(new FileWriter(pathFicheroTransferencias + ".internas", false));
-             PrintWriter escrituraExternas = new PrintWriter(new FileWriter(pathFicheroTransferencias + ".externas", false));
-             BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+             PrintWriter escrituraExternas = new PrintWriter(new FileWriter(pathFicheroTransferencias + ".externas", false))) {
 
-            // ======================================================
-            // =          CREACIÓN DE HILOS PROCESADORES            =
-            // ======================================================
             List<HiloProcesador> hilos = new ArrayList<>();
+
+            System.out.println("Procesador dice: Iniciando " + nHilos + " hilos...");
 
             for (int i = 0; i < nHilos; i++) {
                 hilos.add(new HiloProcesador(
@@ -79,25 +64,19 @@ public class ProcesadorFichero {
                 hilo.start();
             }
 
-            try {
-                for (HiloProcesador hilo : hilos) {
+            // Esperar a que terminen
+            for (HiloProcesador hilo : hilos) {
+                try {
                     hilo.join();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
             }
 
-            String input;
-            while ((input = br.readLine()) != null) {
-                System.out.println(input);
-            }
+            System.out.println("Procesador dice: Todos los hilos han terminado.");
 
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Error al escribir en los ficheros", e);
         } catch (IOException e) {
-            throw new RuntimeException("Error al leer stream del hilo", e);
+            throw new RuntimeException("Error en ficheros de salida", e);
         }
-
     }
-
 }
