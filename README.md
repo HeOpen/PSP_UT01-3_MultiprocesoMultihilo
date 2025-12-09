@@ -57,3 +57,14 @@
 - [ ] Testeado.
 - [ ] Esperará a que este proceso termine, mostrando por consola los mensajes del proceso lanzado.
 - [ ] Testeado.
+
+# Clases que utilizó el profesor:
+7 Clases
+-
+BankAccount
+FileGenerator
+FileProcessor
+Main
+Transfer - Numero de cuenta y cantidad €
+TransferProcessorThread - Procesa las transferencias
+TransferQueue - Monitor de las transferencias
