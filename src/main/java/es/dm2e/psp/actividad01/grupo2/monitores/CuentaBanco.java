@@ -6,8 +6,9 @@ public class CuentaBanco {
 
     private float saldo;
 
-    public CuentaBanco() {
-        this.saldo = 1500 + (new Random().nextInt(120_001) / 100.0f);
+    public CuentaBanco(int numeroTransferencias) {
+        Random random = new Random();
+        this.saldo = numeroTransferencias * (1500 + random.nextInt(1200) + random.nextFloat());
     }
 
     public synchronized float getSaldo() {

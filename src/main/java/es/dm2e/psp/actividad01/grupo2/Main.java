@@ -1,7 +1,5 @@
 package es.dm2e.psp.actividad01.grupo2;
 
-import es.dm2e.psp.actividad01.grupo2.monitores.CuentaBanco;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,10 +25,11 @@ public class Main {
         int nHilos = getNumeroHilos();
 
         // Inicio de procesos
-        iniciarGeneradorTransferencias(directorio, fichero, nTransferencias);
-        iniciarProcesadorTransferencias(directorio, fichero, nTransferencias, nHilos);
-        // saldo total del banco, al terminar el programa
+        int exitValueGenerador = iniciarGeneradorTransferencias(directorio, fichero, nTransferencias);
 
+        if (exitValueGenerador == 0) {
+            iniciarProcesadorTransferencias(directorio, fichero, nTransferencias, nHilos);
+        }
     }
 
     private static String getDirectorio() {
@@ -49,15 +48,15 @@ public class Main {
 
         if (Files.exists(directorioPath) && !Files.isDirectory(directorioPath)) {
             System.out.printf("La ruta para <%s> existe y no es un directorio", directorio);
-            System.exit(3); //se mantiene 3, hace referencia a error relacionado a ficheros
+            System.exit(3);
         }
 
         if (!Files.exists(directorioPath)) {
             try {
-                Files.createDirectory(directorioPath);
+                Files.createDirectories(directorioPath);
             } catch (IOException e) {
                 System.out.printf("Fallo al crear el directorio en <%s>", directorioPath.toAbsolutePath());
-                System.exit(3); //se mantiene 3, hace referencia a error relacionado a ficheros
+                System.exit(3);
             }
         }
         return directorio;
@@ -82,7 +81,6 @@ public class Main {
                 Files.delete(ficheroPath);
             } catch (IOException e) {
                 System.out.printf("Fallo al eliminar el fichero existente en <%s>", ficheroPath.toAbsolutePath());
-                // fixme: los problemas relacionados con el sistema de archivos suelen lanzar código 3, hacerlo?? o 0 ??
                 System.exit(3);
             }
         }
@@ -151,44 +149,42 @@ public class Main {
         return nHilos;
     }
 
-    private static void iniciarGeneradorTransferencias(String directorio, String fichero, int nTransferencias) {
-        // 1. Obtenemos la ruta absoluta al ejecutable de Java actual
-        String javaHome = System.getProperty("java.home");
-        String javaBin = javaHome + java.io.File.separator + "bin" + java.io.File.separator + "java";
-
-        // 2. Obtenemos el Classpath para que encuentre tus clases
+    private static int iniciarGeneradorTransferencias(String directorio, String fichero, int nTransferencias) {
+        int exitValue = 0;
+        String javaBin = System.getProperty("java.home") + java.io.File.separator + "bin" + java.io.File.separator + "java";
         String classpath = System.getProperty("java.class.path");
-
-        // 3. Nombre completo de la clase a ejecutar
         String className = "es.dm2e.psp.actividad01.grupo2.programas.GeneradorFichero";
 
-        // 4. Construimos el comando completo
-        // Equivale a: /usr/bin/java -cp ... es.dm2e...GeneradorFichero
+        // Construimos el comando completo
         ProcessBuilder procesoGenerador = new ProcessBuilder(javaBin, "-cp", classpath, className);
 
-        // Opcional pero recomendado: Heredar errores para verlos en consola si falla el hijo
+        // Heredar errores para verlos en consola si falla el hijo
         procesoGenerador.redirectError(ProcessBuilder.Redirect.INHERIT);
 
         try {
+            System.out.println("Main -> Iniciando programa de generación de transferencias");
             Process process = procesoGenerador.start();
 
             try (PrintWriter pw = new PrintWriter(process.getOutputStream())) {
+                System.out.println("Main -> Pasando parámetros al programa de generación de transferencias");
                 pw.println(directorio);
                 pw.println(fichero);
                 pw.println(nTransferencias);
                 pw.flush();
             }
 
-            int exitValue = process.waitFor();
-            System.out.println("Generador terminó con código: " + exitValue);
+            System.out.println("Main -> Esperando a que el programa de generación de transferencias termine");
+            exitValue = process.waitFor();
+            System.out.println("Main -> Generador terminó con código: " + exitValue);
 
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+        return exitValue;
     }
+
     private static void iniciarProcesadorTransferencias(String directorio, String fichero, int nTransferencias, int nHilos) {
-        String javaHome = System.getProperty("java.home");
-        String javaBin = javaHome + java.io.File.separator + "bin" + java.io.File.separator + "java";
+        String javaBin = System.getProperty("java.home") + java.io.File.separator + "bin" + java.io.File.separator + "java";
         String classpath = System.getProperty("java.class.path");
         String className = "es.dm2e.psp.actividad01.grupo2.programas.ProcesadorFichero";
 
@@ -196,27 +192,32 @@ public class Main {
         procesoProcesador.redirectError(ProcessBuilder.Redirect.INHERIT);
 
         try {
+            System.out.println("Main -> Iniciando programa de procesamiento de transferencias");
             Process process = procesoProcesador.start();
 
             try (PrintWriter pw = new PrintWriter(process.getOutputStream());
                  BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 
-                // Pasar parámetros
+                System.out.println("Main -> Pasando parámetros al programa de procesamiento de transferencias");
                 pw.println(directorio);
                 pw.println(fichero);
                 pw.println(nTransferencias);
                 pw.println(nHilos);
                 pw.flush();
 
-                // Leer salida
                 String output;
+                System.out.println("Main -> Mostrando mensajes generados por el programa que procesa el fichero");
                 while ((output = br.readLine()) != null) {
-                    System.out.println(output);
+                    System.out.println("Main - Procesador -> " + output);
                 }
             }
 
+            System.out.println("Main -> Esperando a que el programa de procesamiento de transferencias termine");
             int exitValue = process.waitFor();
-            System.out.println("Procesador terminó con código: " + exitValue);
+            System.out.println("Main -> Procesador terminó con código: " + exitValue);
+            if (exitValue == 0) {
+                System.out.println("Main -> Terminado programa principal correctamente.");
+            }
 
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);

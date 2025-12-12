@@ -61,13 +61,10 @@ public class GeneradorFichero {
 
                 pw.flush();
 
-            } catch (IOException e) {
-                System.exit(200);
             }
 
         } catch (IOException e) {
-            System.out.printf("Fallo al crear el fichero en <%s>", pathFichero);
-            System.exit(3);
+            System.exit(200);
         }
 
     }

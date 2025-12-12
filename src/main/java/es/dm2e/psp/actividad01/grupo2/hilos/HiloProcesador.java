@@ -7,10 +7,8 @@ import java.io.PrintWriter;
 
 public class HiloProcesador extends Thread {
 
-    // Variable compartida para todos los hilos
-    private static float totalImportes = 0;
-    // Objeto candado para sincronizar la suma del static
-    private static final Object LOCK_SUMA = new Object();
+    // Importe procesado por hilo
+    private float importeProcesado = 0;
 
     private final String nombre;
     private final ColeccionTransferencias coleccionTransferencias;
@@ -29,14 +27,12 @@ public class HiloProcesador extends Thread {
         this.outExterna = outExt;
     }
 
-    public static float getTotalImportes() {
-        return totalImportes;
+    public String getNombre() {
+        return nombre;
     }
 
-    private void sumarImporte(float cantidad) {
-        synchronized (LOCK_SUMA) {
-            totalImportes += cantidad;
-        }
+    public float getImporteProcesado() {
+        return importeProcesado;
     }
 
     @Override
@@ -54,27 +50,27 @@ public class HiloProcesador extends Thread {
 
                 if (!exito) {
                     synchronized (outSinSaldo) {
-                        System.out.println("Guardando operación en fichero sin saldo");
+                        System.out.printf("%s: guardando transferencia %s en fichero sin saldo\n", nombre, transferencia);
                         outSinSaldo.println(transferencia);
                         outSinSaldo.flush();
                     }
                 } else {
                     if (tipoCuenta == '1') {
                         synchronized (outInterna) {
-                            System.out.println("Guardando operación en fichero interno");
+                            System.out.printf("%s: guardando transferencia %s en fichero interno\n", nombre, transferencia);
                             outInterna.println(transferencia);
                             outInterna.flush();
                         }
                     } else if (tipoCuenta == '2') {
                         synchronized (outExterna) {
-                            System.out.println("Guardando operación en fichero externo");
+                            System.out.printf("%s: guardando transferencia %s en fichero externo\n", nombre, transferencia);
                             outExterna.println(transferencia);
                             outExterna.flush();
                         }
                     }
                 }
 
-                sumarImporte(valorTransferencia);
+                importeProcesado += valorTransferencia;
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

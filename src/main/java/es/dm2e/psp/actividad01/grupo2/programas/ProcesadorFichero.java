@@ -19,7 +19,7 @@ public class ProcesadorFichero {
         int nTransferencias = 0;
         int nHilos = 0;
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))){
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
 
             directorio = br.readLine();
             fichero = br.readLine();
@@ -31,12 +31,12 @@ public class ProcesadorFichero {
         }
 
         // 2. PREPARAR ENTITADES
-        CuentaBanco cuentaBanco = new CuentaBanco();
+        CuentaBanco cuentaBanco = new CuentaBanco(nTransferencias);
         ColeccionTransferencias transferencias = new ColeccionTransferencias();
         Path pathFicheroTransferencias = Paths.get(directorio, fichero);
 
-        // Enseñamos el saldo inicial del monitor CuentaBanco
-        System.out.printf("El saldo inicial es de: %.2f €\n", cuentaBanco.getSaldo());
+        // Guardamos el saldo inicial del monitor CuentaBanco
+        float saldoInicial = cuentaBanco.getSaldo();
 
         // 3. CARGAR FICHERO EN MEMORIA
         try (BufferedReader br = new BufferedReader(new FileReader(pathFicheroTransferencias.toFile()))) {
@@ -48,14 +48,15 @@ public class ProcesadorFichero {
             throw new RuntimeException("Error leyendo fichero transferencias", e);
         }
 
+        List<HiloProcesador> hilos = new ArrayList<>();
+
         // 4. PROCESAR (ESCRIBIR SALIDA)
         try (PrintWriter escrituraSinSaldo = new PrintWriter(new FileWriter(pathFicheroTransferencias + ".sinsaldo", false));
              PrintWriter escrituraInternas = new PrintWriter(new FileWriter(pathFicheroTransferencias + ".internas", false));
              PrintWriter escrituraExternas = new PrintWriter(new FileWriter(pathFicheroTransferencias + ".externas", false))) {
 
-            List<HiloProcesador> hilos = new ArrayList<>();
 
-            System.out.println("Procesador dice: Iniciando " + nHilos + " hilos...");
+            System.out.println("Iniciando " + nHilos + " hilos...");
 
             for (int i = 0; i < nHilos; i++) {
                 hilos.add(new HiloProcesador(
@@ -76,12 +77,19 @@ public class ProcesadorFichero {
                 }
             }
 
-            System.out.println("Procesador dice: Todos los hilos han terminado.\n");
+            System.out.println("Todos los hilos han terminado.");
         } catch (IOException e) {
             throw new RuntimeException("Error en ficheros de salida", e);
         }
 
+        // Información final a enseñar
+        System.out.printf("El saldo inicial es de: %.2f €\n", saldoInicial);
+        float totalImporteProcesado = 0;
+        for (HiloProcesador hilo : hilos) {
+            System.out.printf("Importe procesado por %s: %.2f\n", hilo.getNombre(), hilo.getImporteProcesado());
+            totalImporteProcesado += hilo.getImporteProcesado();
+        }
+        System.out.printf("Importe total procesado: %.2f\n", totalImporteProcesado);
         System.out.printf("El saldo final del banco es de %.2f €", cuentaBanco.getSaldo());
-
     }
 }
