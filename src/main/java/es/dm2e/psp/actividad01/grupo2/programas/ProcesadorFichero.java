@@ -32,6 +32,8 @@ public class ProcesadorFichero {
 
         // 2. PREPARAR ENTITADES
         CuentaBanco cuentaBanco = new CuentaBanco();
+        //fixme: sout para comprobar el saldo inicial
+        System.out.printf("El saldo inicial es de: %.2f €\n", cuentaBanco.getSaldo());
         ColeccionTransferencias transferencias = new ColeccionTransferencias();
         Path pathFicheroTransferencias = Paths.get(directorio, fichero);
 
@@ -73,10 +75,12 @@ public class ProcesadorFichero {
                 }
             }
 
-            System.out.println("Procesador dice: Todos los hilos han terminado.");
-
+            System.out.println("Procesador dice: Todos los hilos han terminado.\n");
         } catch (IOException e) {
             throw new RuntimeException("Error en ficheros de salida", e);
         }
+
+        System.out.printf("El saldo final del banco es de %.2f €", cuentaBanco.getSaldo());
+
     }
 }

@@ -29,7 +29,7 @@ public class Main {
         // Inicio de procesos
         iniciarGeneradorTransferencias(directorio, fichero, nTransferencias);
         iniciarProcesadorTransferencias(directorio, fichero, nTransferencias, nHilos);
-        //System.out.printf("El saldo final es de: %d€",);
+        // saldo total del banco, al terminar el programa
 
     }
 
@@ -49,8 +49,7 @@ public class Main {
 
         if (Files.exists(directorioPath) && !Files.isDirectory(directorioPath)) {
             System.out.printf("La ruta para <%s> existe y no es un directorio", directorio);
-            // fixme: los problemas relacionados con el sistema de archivos suelen lanzar código 3, hacerlo?? o 0 ??
-            System.exit(3);
+            System.exit(3); //se mantiene 3, hace referencia a error relacionado a ficheros
         }
 
         if (!Files.exists(directorioPath)) {
@@ -58,8 +57,7 @@ public class Main {
                 Files.createDirectory(directorioPath);
             } catch (IOException e) {
                 System.out.printf("Fallo al crear el directorio en <%s>", directorioPath.toAbsolutePath());
-                // fixme: los problemas relacionados con el sistema de archivos suelen lanzar código 3, hacerlo?? o 0 ??
-                System.exit(3);
+                System.exit(3); //se mantiene 3, hace referencia a error relacionado a ficheros
             }
         }
         return directorio;

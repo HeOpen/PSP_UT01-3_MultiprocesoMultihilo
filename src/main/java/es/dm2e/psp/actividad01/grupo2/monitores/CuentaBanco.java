@@ -17,8 +17,6 @@ public class CuentaBanco {
 
     public synchronized boolean realizarTransferencia(float saldo) {
         if (this.saldo - saldo < 0) {
-            // fixme: o hacer wait() mejor???
-            // Si hubiera otro hilo haciendo una transferencia se haria wait, no es el caso. return false esta bien.
             return false;
         }
         this.saldo -= saldo;

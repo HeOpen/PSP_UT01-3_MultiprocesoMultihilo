@@ -7,7 +7,10 @@ import java.io.PrintWriter;
 
 public class HiloProcesador extends Thread {
 
+    // Variable compartida para todos los hilos
     private static float totalImportes = 0;
+    // Objeto candado para sincronizar la suma del static
+    private static final Object LOCK_TOTAL = new Object();
 
     private final String nombre;
     private final ColeccionTransferencias coleccionTransferencias;
@@ -16,54 +19,62 @@ public class HiloProcesador extends Thread {
     private final PrintWriter outInterna;
     private final PrintWriter outExterna;
 
-    public HiloProcesador(
-            String nombre,
-            ColeccionTransferencias coleccionTransferencias, CuentaBanco cuentaBanco,
-            PrintWriter outSinSaldo, PrintWriter outInterna, PrintWriter outExterna) {
+    public HiloProcesador(String nombre, ColeccionTransferencias col, CuentaBanco cuenta,
+                          PrintWriter outSin, PrintWriter outInt, PrintWriter outExt) {
         this.nombre = nombre;
-        this.coleccionTransferencias = coleccionTransferencias;
-        this.cuentaBanco = cuentaBanco;
-        this.outSinSaldo = outSinSaldo;
-        this.outInterna = outInterna;
-        this.outExterna = outExterna;
+        this.coleccionTransferencias = col;
+        this.cuentaBanco = cuenta;
+        this.outSinSaldo = outSin;
+        this.outInterna = outInt;
+        this.outExterna = outExt;
     }
 
-    public float getTotalImportes() {
+    public static float getTotalImportes() {
         return totalImportes;
     }
 
-    public String getNombre() {
-        return nombre;
+    private void sumarImporte(float cantidad) {
+        synchronized (LOCK_TOTAL) {
+            totalImportes += cantidad;
+        }
     }
 
     @Override
     public void run() {
         try {
-            while (coleccionTransferencias.peekTransferencia() != null && !this.isInterrupted()) {
-                String transferencia = coleccionTransferencias.pollTransferencia();
+            String transferencia;
+            while ((transferencia = coleccionTransferencias.pollTransferencia()) != null && !this.isInterrupted()) {
+
                 float valorTransferencia = Float.parseFloat(transferencia.split(";")[1]);
-                System.out.printf("Se procede a realizar transferencia: %s\n", transferencia);
-                System.out.printf("Saldo de la cuenta del banco: %f\n", cuentaBanco.getSaldo());
-                if (!cuentaBanco.realizarTransferencia(valorTransferencia)) {
-                    System.out.println("Guardando operación en fichero sin saldo");
-                    outSinSaldo.println(transferencia);
-                    totalImportes += valorTransferencia;
+                char tipoCuenta = transferencia.charAt(0);
+
+                System.out.printf("%s procesando: %s\n", nombre, transferencia);
+
+                boolean exito = cuentaBanco.realizarTransferencia(valorTransferencia);
+
+                if (!exito) {
+                    synchronized (outSinSaldo) {
+                        System.out.println("Guardando operación en fichero sin saldo");
+                        outSinSaldo.println(transferencia);
+                        outSinSaldo.flush();
+                    }
                 } else {
-                    cuentaBanco.realizarTransferencia(valorTransferencia);
-                    switch (transferencia.charAt(0)) {
-                        case '1':
+                    if (tipoCuenta == '1') {
+                        synchronized (outInterna) {
                             System.out.println("Guardando operación en fichero interno");
                             outInterna.println(transferencia);
-                            totalImportes += valorTransferencia;
-                            break;
-                        case '2':
+                            outInterna.flush();
+                        }
+                    } else if (tipoCuenta == '2') {
+                        synchronized (outExterna) {
                             System.out.println("Guardando operación en fichero externo");
                             outExterna.println(transferencia);
-                            totalImportes += valorTransferencia;
-                            break;
+                            outExterna.flush();
+                        }
                     }
                 }
 
+                sumarImporte(valorTransferencia);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
