@@ -19,23 +19,24 @@ public class ProcesadorFichero {
         int nTransferencias = 0;
         int nHilos = 0;
 
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))){
+
             directorio = br.readLine();
             fichero = br.readLine();
             nTransferencias = Integer.parseInt(br.readLine());
             nHilos = Integer.parseInt(br.readLine());
-            // No cerramos br aquí explícitamente, dejamos que el proceso muera.
+
         } catch (IOException e) {
             System.exit(200);
         }
 
         // 2. PREPARAR ENTITADES
         CuentaBanco cuentaBanco = new CuentaBanco();
-        //fixme: sout para comprobar el saldo inicial
-        System.out.printf("El saldo inicial es de: %.2f €\n", cuentaBanco.getSaldo());
         ColeccionTransferencias transferencias = new ColeccionTransferencias();
         Path pathFicheroTransferencias = Paths.get(directorio, fichero);
+
+        // Enseñamos el saldo inicial del monitor CuentaBanco
+        System.out.printf("El saldo inicial es de: %.2f €\n", cuentaBanco.getSaldo());
 
         // 3. CARGAR FICHERO EN MEMORIA
         try (BufferedReader br = new BufferedReader(new FileReader(pathFicheroTransferencias.toFile()))) {

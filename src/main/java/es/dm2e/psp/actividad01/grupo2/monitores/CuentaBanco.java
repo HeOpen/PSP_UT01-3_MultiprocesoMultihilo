@@ -5,17 +5,16 @@ import java.util.Random;
 public class CuentaBanco {
 
     private float saldo;
-    private float saldoInicial = new Random().nextFloat() * (2_700 - 1_500) + 1_500;
 
     public CuentaBanco() {
-        this.saldo = saldoInicial;
+        this.saldo = 1500 + (new Random().nextInt(120_001) / 100.0f);
     }
 
     public synchronized float getSaldo() {
         return saldo;
     }
 
-    public synchronized boolean realizarTransferencia(float saldo) {
+    public synchronized boolean transferenciaDisponible(float saldo) {
         if (this.saldo - saldo < 0) {
             return false;
         }

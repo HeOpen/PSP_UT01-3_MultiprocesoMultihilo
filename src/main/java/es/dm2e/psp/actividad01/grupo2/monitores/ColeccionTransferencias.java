@@ -15,8 +15,4 @@ public class ColeccionTransferencias {
         return this.transferencias.poll();
     }
 
-    public synchronized String peekTransferencia() {
-        return this.transferencias.peek();
-    }
-
 }

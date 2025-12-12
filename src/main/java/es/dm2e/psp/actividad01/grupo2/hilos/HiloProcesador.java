@@ -10,7 +10,7 @@ public class HiloProcesador extends Thread {
     // Variable compartida para todos los hilos
     private static float totalImportes = 0;
     // Objeto candado para sincronizar la suma del static
-    private static final Object LOCK_TOTAL = new Object();
+    private static final Object LOCK_SUMA = new Object();
 
     private final String nombre;
     private final ColeccionTransferencias coleccionTransferencias;
@@ -34,7 +34,7 @@ public class HiloProcesador extends Thread {
     }
 
     private void sumarImporte(float cantidad) {
-        synchronized (LOCK_TOTAL) {
+        synchronized (LOCK_SUMA) {
             totalImportes += cantidad;
         }
     }
@@ -50,7 +50,7 @@ public class HiloProcesador extends Thread {
 
                 System.out.printf("%s procesando: %s\n", nombre, transferencia);
 
-                boolean exito = cuentaBanco.realizarTransferencia(valorTransferencia);
+                boolean exito = cuentaBanco.transferenciaDisponible(valorTransferencia);
 
                 if (!exito) {
                     synchronized (outSinSaldo) {
