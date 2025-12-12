@@ -17,7 +17,6 @@ public class CuentaBanco {
 
     public synchronized boolean realizarTransferencia(float saldo) {
         if (this.saldo - saldo < 0) {
-            // fixme: o hacer wait() mejor???
             return false;
         }
         this.saldo -= saldo;
